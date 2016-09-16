@@ -2,3 +2,5 @@
 .doit.db.db
 __pycache__
 *~
+*.abundtrim
+acido-chunk-reads
