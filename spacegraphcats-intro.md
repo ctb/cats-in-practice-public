@@ -7,7 +7,7 @@ Compact De Bruijn graphs (cDBG) are commonly used in biological sequence
 analysis.
 
 Dominating sets have been used to discover components in very large De
-Bruijn graphs (Pell et al., 2012, PNAS).  (Some discussion of
+Bruijn graphs [Pell et al., 2012, PNAS](http://www.pnas.org/content/109/33/13272.abstract).  (Some discussion of
 dominating sets and/or sparse graph similarity in concepts?)  They are
 potentially useful ways to investigate large scale graph structure but
 are (a) large and (b) expensive to calculate, both in theory and in
