@@ -20,6 +20,7 @@ def task_make_simulated_reads(inp_filename):
             'uptodate': [run_once],
             'clean': [clean_targets]}
 
+
 @make_task
 def task_trim_reads(orig_files):
     CMD_trim = 'trim-low-abund.py -Z 20 -C 3 -M 1e9 -k 31 {0}'
@@ -31,6 +32,7 @@ def task_trim_reads(orig_files):
             'targets': targets,
             'uptodate': [run_once],
             'clean': [clean_targets]}
+
 
 @make_task
 def task_walk_dbg(orig_files, output_dir):
@@ -69,7 +71,6 @@ def main():
     tasks.append(task_trim_reads(ACIDO_CHUNKS))
     tasks.append(task_walk_dbg(ACIDO_CHUNKS, output_dir))
     run_tasks(tasks, ['run'])
-    # problem: this ALWAYS runs a task, but not predictable ones - why? @CTB
 
 
 if __name__ == '__main__':

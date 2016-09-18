@@ -12,7 +12,7 @@ def make_task(task_dict_func):
     '''
     def d_to_t(*args, **kwargs):
         global _task_count
-        name = "{0}.{1}".format(str(_task_count), str(task_dict_func))
+        name = "{0}.func<{1}>".format(str(_task_count), task_dict_func.__name__)
         _task_count += 1
     
         ret_dict = task_dict_func(*args, **kwargs)
