@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+import os
+
 from doit_utils import run_tasks
 from spg_tasklib import *
 
@@ -14,9 +16,15 @@ def main():
     parser.add_argument('-r', '--radius', type=int, default=3)
     args = parser.parse_args()
 
-    nodes_file = '{0}.{1}.x.{2}.{3}'.format(args.catlas, args.radius,
-                                            os.path.basename(args.inpfile),
-                                            os.path.basename(args.outfile))
+    try:
+        os.mkdir('temp')
+    except OSError:
+        pass
+    #set_tempdir('./temp/')
+
+    nodes_file = 'temp/{0}.{1}.x.{2}.{3}'.format(args.catlas, args.radius,
+                                                os.path.basename(args.inpfile),
+                                                os.path.basename(args.outfile))
 
     tasks = []
     tasks.append(task_gimme_dbg_nodes(args.catlas, args.radius,

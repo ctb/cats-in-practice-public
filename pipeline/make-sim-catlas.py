@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+import os
+
 from doit_utils import run_tasks
 from spg_tasklib import *
 
@@ -11,6 +13,12 @@ def main():
     parser.add_argument('inp_fasta', nargs='+')
     parser.add_argument('-r', '--radius', type=int, default=3)
     args = parser.parse_args()
+
+    try:
+        os.mkdir('temp')
+    except OSError:
+        pass
+    #set_tempdir('./temp/')
 
     tasks = []
     for inp_filename in args.inp_fasta:
