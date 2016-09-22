@@ -72,3 +72,31 @@ def task_build_catlas(dirname, radius):
             'file_dep': ['{0}/{0}.gxt'.format(dirname),
                          '{0}/{0}.mxt'.format(dirname)],
             'clean': [clean_targets]}
+
+
+@make_task
+def task_gimme_dbg_nodes(catlasdir, radius, sigfile, strategy, args, outfile):
+    CMD_gimme = '~/dev/spacegraphcats/gimme-dbg-nodes.py {0} {1} {2} --strategy {3} {4} -o {5}'
+
+    deps = [ '{0}/{0}.assignment.{1}.vxt',
+             '{0}/{0}.catlas.{1}.gxt',
+             '{0}/{0}.catlas.{1}.mxt',
+             '{0}/{0}.domgraph.{1}.gxt' ]
+    deps = [ t.format(catlasdir, radius) for t in deps ]
+    return {'actions': [CMD_gimme.format(catlasdir, radius, sigfile,
+                                         strategy, args, outfile)],
+            'targets': [outfile],
+            'uptodate': [run_once],
+            'file_dep': deps,
+            'clean': [clean_targets]}
+
+
+@make_task
+def task_gimme_reads(readsfile, nodes_file, outfile):
+    CMD_gimme_reads = '~/dev/spacegraphcats/gimme-reads.py {0} {1} -o {2}'
+
+    return {'actions': [CMD_gimme_reads.format(readsfile, nodes_file, outfile)],
+            'targets': [outfile],
+            'uptodate': [run_once],
+            'file_dep': [readsfile, nodes_file],
+            'clean': [clean_targets]}
