@@ -1,6 +1,6 @@
-all: acido-stuff
+all: acido-sim-catlas acido-genome-catlas
 
-acido-stuff:
+acido-sim-catlas:
 	./make-sim-catlas.py acido-chunk-reads data/acido-chunk[12].fa.gz
 	./recover-reads.py acido-chunk-reads data/acido-chunk1.fa.sig.dump.txt \
 		acido-chunk1.reads.fa.abundtrim acido-chunk1-1.extract.fa
@@ -11,3 +11,5 @@ acido-stuff:
 	./recover-reads.py acido-chunk-reads data/acido-chunk2.fa.sig.dump.txt \
 		acido-chunk2.reads.fa.abundtrim acido-chunk2-2.extract.fa
 
+acido-genome-catlas:
+	./make-genome-catlas.py acido-genome data/acido-chunk[12].fa.gz

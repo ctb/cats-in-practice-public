@@ -14,20 +14,14 @@ def main():
     parser.add_argument('-r', '--radius', type=int, default=3)
     args = parser.parse_args()
 
-    read_files = [ os.path.basename(t)[:-5] + 'reads.fa' for t in args.inp_fasta ]
-    trim_files = [ t + '.abundtrim' for t in read_files ]
+    try:
+        os.mkdir('temp')
+    except OSError:
+        pass
+    #set_tempdir('./temp/')
 
     tasks = []
-    # produces read_files
-    for inp_filename in args.inp_fasta:
-        task = task_make_simulated_reads(inp_filename)
-        tasks.append(task)
-
-    # produces trim_files
-    tasks.append(task_trim_reads(read_files))
-
-    # => DBG
-    tasks.append(task_walk_dbg(trim_files, args.dirname))
+    tasks.append(task_walk_dbg(args.inp_fasta, args.dirname, label=True))
     tasks.append(task_build_catlas(args.dirname, args.radius))
     run_tasks(tasks, ['run'])
 

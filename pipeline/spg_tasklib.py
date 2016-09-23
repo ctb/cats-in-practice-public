@@ -8,17 +8,10 @@ from doit.tools import run_once
 from doit.task import clean_targets
 
 
-_tempdir = './'
-def set_tempdir(t):
-    global _tempdir
-    _tempdir = t
-
-
 @make_task
 def task_make_simulated_reads(inp_filename):
     CMD_make_reads = "~/dev/nullgraph/make-reads.py {0} -e .01 -r 100 -C 20 > {1}"
     target = os.path.basename(inp_filename)[:-5] + 'reads.fa'
-    target = os.path.join(_tempdir, target)
         
     return {'actions': [CMD_make_reads.format(inp_filename, target)],
             'targets': [target],
@@ -31,35 +24,32 @@ def task_make_simulated_reads(inp_filename):
 def task_trim_reads(orig_files):
     CMD_trim = 'trim-low-abund.py -Z 20 -C 3 -M 1e9 -k 31 {0}'
 
-    inp_files = [ os.path.basename(t)[:-5] + 'reads.fa' for t in orig_files ]
-    inp_files = [ os.path.join(_tempdir, t) for t in inp_files ]
-    targets = [ t + '.abundtrim' for t in inp_files ]
+    targets = [ os.path.basename(t) + '.abundtrim' for t in orig_files ]
 
-    return {'actions': [CMD_trim.format(" ".join(inp_files))],
+    return {'actions': [CMD_trim.format(" ".join(orig_files))],
             'targets': targets,
             'uptodate': [run_once],
-            'file_dep': inp_files,
+            'file_dep': orig_files,
             'clean': [clean_targets]}
 
 
 @make_task
-def task_walk_dbg(orig_files, output_dir):
+def task_walk_dbg(orig_files, output_dir, label=False):
     def rm_output_dir():
         try:
             shutil.rmtree(output_dir)
         except FileNotFoundError:
             pass
 
-    CMD_walk = '~/dev/spacegraphcats/walk-dbg.py -k 31 -x 4e9 -o {0} {1} --label'
-
-    inp_files = [ os.path.basename(t)[:-5] + 'reads.fa' for t in orig_files ]
-    inp_files = [ os.path.join(_tempdir, t) + '.abundtrim' for t in inp_files ]
+    CMD_walk = '~/dev/spacegraphcats/walk-dbg.py -k 31 -x 4e9 -o {0} {1}'
+    if label:
+        CMD_walk += ' --label'
 
     return {'actions': [rm_output_dir,
-                        CMD_walk.format(output_dir, " ".join(inp_files))],
+                        CMD_walk.format(output_dir, " ".join(orig_files))],
             'targets': ['{0}/{0}.gxt'.format(output_dir),
                         '{0}/{0}.mxt'.format(output_dir) ],
-            'file_dep': inp_files,
+            'file_dep': orig_files,
             'uptodate': [run_once],
             'clean': [clean_targets]}
 
