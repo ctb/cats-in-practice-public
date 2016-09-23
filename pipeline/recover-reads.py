@@ -22,14 +22,13 @@ def main():
         pass
     #set_tempdir('./temp/')
 
-    nodes_file = 'temp/{0}.{1}.x.{2}.{3}'.format(args.catlas, args.radius,
-                                                os.path.basename(args.inpfile),
-                                                os.path.basename(args.outfile))
+    nodes_file = 'temp/{0}.{1}.x.{2}'.format(args.catlas, args.radius,
+                                             os.path.basename(args.sigfile))
 
     tasks = []
     tasks.append(task_gimme_dbg_nodes(args.catlas, args.radius,
                                       args.sigfile, 'gathermins2',
-                                      '--searchlevel 1', nodes_file))
+                                      '--searchlevel 2', nodes_file))
     tasks.append(task_gimme_reads(args.inpfile, nodes_file, args.outfile))
 
     run_tasks(tasks, ['run'])
