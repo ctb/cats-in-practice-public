@@ -21,12 +21,12 @@ def task_make_simulated_reads(inp_filename):
 
 
 @make_task
-def task_trim_reads(orig_files):
-    CMD_trim = 'trim-low-abund.py -Z 20 -C 3 -M 1e9 -k 31 {0}'
+def task_trim_reads(orig_files, memory=1e9):
+    CMD_trim = 'trim-low-abund.py -Z 20 -C 3 -M {1} -k 31 {0}'
 
     targets = [ os.path.basename(t) + '.abundtrim' for t in orig_files ]
 
-    return {'actions': [CMD_trim.format(" ".join(orig_files))],
+    return {'actions': [CMD_trim.format(" ".join(orig_files), memory)],
             'targets': targets,
             'uptodate': [run_once],
             'file_dep': orig_files,
@@ -34,14 +34,15 @@ def task_trim_reads(orig_files):
 
 
 @make_task
-def task_walk_dbg(orig_files, output_dir, label=False):
+def task_walk_dbg(orig_files, output_dir, label=False, memory=1e9):
     def rm_output_dir():
         try:
             shutil.rmtree(output_dir)
         except FileNotFoundError:
             pass
 
-    CMD_walk = '~/dev/spacegraphcats/walk-dbg.py -k 31 -x 4e9 -o {0} {1}'
+    CMD_walk = '~/dev/spacegraphcats/walk-dbg.py -k 31 -o {0} {1}'
+    CMD_walk += ' -M {0}'.format(memory)
     if label:
         CMD_walk += ' --label'
 
