@@ -12,6 +12,8 @@ def main():
     parser.add_argument('dirname')
     parser.add_argument('inp_fasta', nargs='+')
     parser.add_argument('-r', '--radius', type=int, default=3)
+
+    parser.add_argument('--clean', default=False, action='store_true')
     args = parser.parse_args()
 
     read_files = [ os.path.basename(t)[:-5] + 'reads.fa' for t in args.inp_fasta ]
@@ -29,7 +31,11 @@ def main():
     # => DBG
     tasks.append(task_walk_dbg(trim_files, args.dirname))
     tasks.append(task_build_catlas(args.dirname, args.radius))
-    run_tasks(tasks, ['run'])
+
+    if args.clean:
+        run_tasks(tasks, ['clean'])
+    else:
+        run_tasks(tasks, ['run'])
 
 
 if __name__ == '__main__':

@@ -12,6 +12,8 @@ def main():
     parser.add_argument('dirname')
     parser.add_argument('inp_fasta', nargs='+')
     parser.add_argument('-r', '--radius', type=int, default=3)
+
+    parser.add_argument('--clean', default=False, action='store_true')
     args = parser.parse_args()
 
     try:
@@ -23,7 +25,11 @@ def main():
     tasks = []
     tasks.append(task_walk_dbg(args.inp_fasta, args.dirname, label=True))
     tasks.append(task_build_catlas(args.dirname, args.radius))
-    run_tasks(tasks, ['run'])
+
+    if args.clean:
+        run_tasks(tasks, ['clean'])
+    else:
+        run_tasks(tasks, ['run'])
 
 
 if __name__ == '__main__':

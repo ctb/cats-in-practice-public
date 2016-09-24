@@ -14,6 +14,8 @@ def main():
     parser.add_argument('inpfile')
     parser.add_argument('outfile')
     parser.add_argument('-r', '--radius', type=int, default=3)
+
+    parser.add_argument('--clean', default=False, action='store_true')
     args = parser.parse_args()
 
     try:
@@ -31,7 +33,10 @@ def main():
                                       '--searchlevel 2', nodes_file))
     tasks.append(task_gimme_reads(args.inpfile, nodes_file, args.outfile))
 
-    run_tasks(tasks, ['run'])
+    if args.clean:
+        run_tasks(tasks, ['clean'])
+    else:
+        run_tasks(tasks, ['run'])
 
 
 if __name__ == '__main__':
