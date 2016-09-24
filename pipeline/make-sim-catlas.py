@@ -1,4 +1,11 @@
 #! /usr/bin/env python
+"""
+Build a catlas from a set of reads simulated from input contigs.
+
+This script will create a set of fake reads from the input contigs,
+then error trim them, build a compact De Bruijn graph from them, and
+build a catlas from that.
+"""
 import os
 
 from doit_utils import run_tasks

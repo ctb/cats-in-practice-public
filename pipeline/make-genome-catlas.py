@@ -1,4 +1,11 @@
 #! /usr/bin/env python
+"""
+Build a catlas from a collection of contigs/genomes.
+
+This script will build a compact De Bruijn graph from the input contigs and
+build a catlas from that.
+
+"""
 import os
 
 from doit_utils import run_tasks
