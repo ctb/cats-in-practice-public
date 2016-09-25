@@ -1,4 +1,5 @@
-all: acido-sim-catlas acido-genome-catlas acido-reads-catlas
+all: acido-sim-catlas acido-genome-catlas acido-reads-catlas \
+	15genome-catlas
 
 clean:
 	./make-sim-catlas.py acido-chunk-reads data/acido-chunk[12].fa.gz --clean
@@ -12,7 +13,8 @@ clean:
 	./recover-reads.py acido-chunk-reads data/acido-chunk2.fa.sig.dump.txt \
 		acido-chunk2.reads.fa.abundtrim acido-chunk2-2.extract.fa --clean
 	./make-reads-catlas.py acido-reads-catlas acido-chunk[12].reads.fa --clean
-	rm -fr acido-genome acido-chunk-reads acido-reads-catlas
+	./make-genome-catlas.py 15genome data/15genome.fa.gz -M 4e9 --clean
+	rm -fr acido-genome acido-chunk-reads acido-reads-catlas 15genome
 
 acido-sim-catlas:
 	./make-sim-catlas.py acido-chunk-reads data/acido-chunk[12].fa.gz
@@ -30,3 +32,9 @@ acido-genome-catlas:
 
 acido-reads-catlas: acido-sim-catlas
 	./make-reads-catlas.py acido-reads-catlas acido-chunk[12].reads.fa
+
+15genome-catlas:
+	./make-genome-catlas.py 15genome data/15genome.fa.gz -M 4e9
+	~/dev/spacegraphcats/search-for-domgraph-nodes-multi.py \
+		--strategy gathermins2 --searchlevel 4 15genome 3 \
+		~/dev/spacegraphcats/data/15genome.fa.*.txt
