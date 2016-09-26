@@ -13,11 +13,12 @@ def task_make_simulated_reads(inp_filename):
     CMD_make_reads = "~/dev/nullgraph/make-reads.py {0} -e .01 -r 100 -C 20 > {1}"
     target = os.path.basename(inp_filename)[:-5] + 'reads.fa'
         
-    return {'actions': [CMD_make_reads.format(inp_filename, target)],
-            'targets': [target],
-            'uptodate': [run_once],
-            'file_dep': [inp_filename],
-            'clean': [clean_targets]}
+    return dict(name='make_simulated_reads<{0}>'.format(inp_filename),
+                actions=[CMD_make_reads.format(inp_filename, target)],
+                targets=[target],
+                uptodate=[run_once],
+                file_dep=[inp_filename],
+                clean=[clean_targets])
 
 
 @make_task
@@ -26,7 +27,11 @@ def task_trim_reads(orig_files, memory=1e9):
 
     targets = [ os.path.basename(t) + '.abundtrim' for t in orig_files ]
 
-    return {'actions': [CMD_trim.format(" ".join(orig_files), memory)],
+    name = 'task_trim_reads<{0}.{1}>'.format(",".join(orig_files),
+                                             memory)
+
+    return {'name': name,
+            'actions': [CMD_trim.format(" ".join(orig_files), memory)],
             'targets': targets,
             'uptodate': [run_once],
             'file_dep': orig_files,
@@ -46,7 +51,15 @@ def task_walk_dbg(orig_files, output_dir, label=False, memory=1e9):
     if label:
         CMD_walk += ' --label'
 
-    return {'actions': [rm_output_dir,
+    if label:
+        labeltxt = 'l'
+    else:
+        labeltxt = 'n'
+    name = 'walk_dbg<{0}.{1}.{2}.{3}>'.format(",".join(orig_files), output_dir,
+                                              memory, labeltxt)
+
+    return {'name': name,
+            'actions': [rm_output_dir,
                         CMD_walk.format(output_dir, " ".join(orig_files))],
             'targets': ['{0}/{0}.gxt'.format(output_dir),
                         '{0}/{0}.mxt'.format(output_dir) ],
@@ -65,7 +78,10 @@ def task_build_catlas(dirname, radius):
                 '{0}/{0}.domgraph.{1}.gxt' ]
     targets = [ t.format(dirname, radius) for t in targets ]
 
-    return {'actions': [CMD_build.format(dirname, radius)],
+    name = 'build_catlas<{0}.{1}>'.format(dirname, radius)
+
+    return {'name': name,
+            'actions': [CMD_build.format(dirname, radius)],
             'targets': targets,
             'uptodate': [run_once],
             'file_dep': ['{0}/{0}.gxt'.format(dirname),
@@ -82,7 +98,14 @@ def task_gimme_dbg_nodes(catlasdir, radius, sigfile, strategy, args, outfile):
              '{0}/{0}.catlas.{1}.mxt',
              '{0}/{0}.domgraph.{1}.gxt' ]
     deps = [ t.format(catlasdir, radius) for t in deps ]
-    return {'actions': [CMD_gimme.format(catlasdir, radius, sigfile,
+
+    name = 'gimme_dbg_nodes<{0}.{1}.{2}.{3}.{4}>'.format(catlasdir,
+                                                         radius, sigfile,
+                                                         strategy,
+                                                         outfile)
+
+    return {'name': name,
+            'actions': [CMD_gimme.format(catlasdir, radius, sigfile,
                                          strategy, args, outfile)],
             'targets': [outfile],
             'uptodate': [run_once],
@@ -94,7 +117,10 @@ def task_gimme_dbg_nodes(catlasdir, radius, sigfile, strategy, args, outfile):
 def task_gimme_reads(readsfile, nodes_file, outfile):
     CMD_gimme_reads = '~/dev/spacegraphcats/gimme-reads.py {0} {1} -o {2}'
 
-    return {'actions': [CMD_gimme_reads.format(readsfile, nodes_file, outfile)],
+    name = 'gimme_reads<{0}.{1}.{2}>'.format(readsfile, nodes_file, outfile)
+
+    return {'name': name,
+            'actions': [CMD_gimme_reads.format(readsfile, nodes_file, outfile)],
             'targets': [outfile],
             'uptodate': [run_once],
             'file_dep': [readsfile, nodes_file],
