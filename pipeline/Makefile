@@ -29,6 +29,18 @@ acido-sim-catlas:
 
 acido-genome-catlas:
 	./make-genome-catlas.py acido-genome data/acido-chunk[12].fa.gz
+	~/dev/spacegraphcats/search-for-domgraph-nodes-multi.py \
+		--strategy frontier-jacc \
+		acido-genome 3 data/acido-chunk[12].fa.sig.dump.txt
+	~/dev/spacegraphcats/search-for-domgraph-nodes-multi.py \
+		--strategy frontier-worst \
+		acido-genome 3 data/acido-chunk[12].fa.sig.dump.txt
+	~/dev/spacegraphcats/search-for-domgraph-nodes.py \
+		--strategy frontier-jacc \
+		acido-genome 3 data/acido-chunk1.fa.sig.dump.txt 1
+	~/dev/spacegraphcats/search-for-domgraph-nodes.py \
+		--strategy frontier-worst \
+		acido-genome 3 data/acido-chunk1.fa.sig.dump.txt 1
 
 acido-reads-catlas: acido-sim-catlas
 	./make-reads-catlas.py acido-reads-catlas acido-chunk[12].reads.fa
@@ -36,5 +48,5 @@ acido-reads-catlas: acido-sim-catlas
 15genome-catlas:
 	./make-genome-catlas.py 15genome data/15genome.fa.gz -M 4e9
 	~/dev/spacegraphcats/search-for-domgraph-nodes-multi.py \
-		--strategy gathermins2 --searchlevel 4 15genome 3 \
-		~/dev/spacegraphcats/data/15genome.fa.*.txt
+		--strategy frontier-jacc \
+		15genome 3 ~/dev/spacegraphcats/data/15genome.fa.*.txt
