@@ -104,7 +104,11 @@ def task_gimme_dbg_nodes(catlasdir, radius, sigfile, strategy, args, outfile):
                                                          strategy,
                                                          outfile)
 
+    title = 'finding matching nodes to {0} in {1}'.format(sigfile, catlasdir)
+    title_fn = lambda t: title
+
     return {'name': name,
+            'title': title_fn,
             'actions': [CMD_gimme.format(catlasdir, radius, sigfile,
                                          strategy, args, outfile)],
             'targets': [outfile],
@@ -119,7 +123,11 @@ def task_gimme_reads(readsfile, nodes_file, outfile):
 
     name = 'gimme_reads<{0}.{1}.{2}>'.format(readsfile, nodes_file, outfile)
 
+    title = 'extracting reads from {0}\n\t=> {1}'.format(readsfile, outfile)
+    title_fn = lambda t: title
+
     return {'name': name,
+            'title': title_fn,
             'actions': [CMD_gimme_reads.format(readsfile, nodes_file, outfile)],
             'targets': [outfile],
             'uptodate': [run_once],
