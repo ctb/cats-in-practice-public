@@ -8,13 +8,18 @@ from doit.tools import run_once
 from doit.task import clean_targets
 
 
+NULLGRAPH_LOCATION='../../nullgraph'
+SPG_LOCATION='../../spacegraphcats'
+
+
 @make_task
 def task_make_simulated_reads(inp_filename):
-    CMD_make_reads = "~/dev/nullgraph/make-reads.py {0} -e .01 -r 100 -C 20 > {1}"
+    CMD_make_reads = "{0}/make-reads.py {1} -e .01 -r 100 -C 20 > {2}"
     target = os.path.basename(inp_filename)[:-5] + 'reads.fa'
         
     return dict(name='make_simulated_reads<{0}>'.format(inp_filename),
-                actions=[CMD_make_reads.format(inp_filename, target)],
+                actions=[CMD_make_reads.format(NULLGRAPH_LOCATION,
+                                               inp_filename, target)],
                 targets=[target],
                 uptodate=[run_once],
                 file_dep=[inp_filename],
@@ -46,7 +51,7 @@ def task_walk_dbg(orig_files, output_dir, label=False, memory=1e9):
         except FileNotFoundError:
             pass
 
-    CMD_walk = '~/dev/spacegraphcats/walk-dbg.py -k 31 -o {0} {1}'
+    CMD_walk = '{0}/walk-dbg.py -k 31 -o {1} {2}'
     CMD_walk += ' -M {0}'.format(memory)
     if label:
         CMD_walk += ' --label'
@@ -60,7 +65,8 @@ def task_walk_dbg(orig_files, output_dir, label=False, memory=1e9):
 
     return {'name': name,
             'actions': [rm_output_dir,
-                        CMD_walk.format(output_dir, " ".join(orig_files))],
+                        CMD_walk.format(SPG_LOCATION,
+                                        output_dir, " ".join(orig_files))],
             'targets': ['{0}/{0}.gxt'.format(output_dir),
                         '{0}/{0}.mxt'.format(output_dir) ],
             'file_dep': orig_files,
@@ -70,7 +76,7 @@ def task_walk_dbg(orig_files, output_dir, label=False, memory=1e9):
 
 @make_task
 def task_build_catlas(dirname, radius):
-    CMD_build = '~/dev/spacegraphcats/build-catlas.py {0} {1}'
+    CMD_build = '{0}/build-catlas.py {1} {2}'
 
     targets = [ '{0}/{0}.assignment.{1}.vxt',
                 '{0}/{0}.catlas.{1}.gxt',
@@ -81,7 +87,7 @@ def task_build_catlas(dirname, radius):
     name = 'build_catlas<{0}.{1}>'.format(dirname, radius)
 
     return {'name': name,
-            'actions': [CMD_build.format(dirname, radius)],
+            'actions': [CMD_build.format(SPG_LOCATION, dirname, radius)],
             'targets': targets,
             'uptodate': [run_once],
             'file_dep': ['{0}/{0}.gxt'.format(dirname),
@@ -91,7 +97,7 @@ def task_build_catlas(dirname, radius):
 
 @make_task
 def task_gimme_dbg_nodes(catlasdir, radius, sigfile, strategy, args, outfile):
-    CMD_gimme = '~/dev/spacegraphcats/gimme-dbg-nodes.py {0} {1} {2} --strategy {3} {4} -o {5}'
+    CMD_gimme = '{0}/gimme-dbg-nodes.py {1} {2} {3} --strategy {4} {5} -o {6}'
 
     deps = [ '{0}/{0}.assignment.{1}.vxt',
              '{0}/{0}.catlas.{1}.gxt',
@@ -109,7 +115,8 @@ def task_gimme_dbg_nodes(catlasdir, radius, sigfile, strategy, args, outfile):
 
     return {'name': name,
             'title': title_fn,
-            'actions': [CMD_gimme.format(catlasdir, radius, sigfile,
+            'actions': [CMD_gimme.format(SPG_LOCATION,
+                                         catlasdir, radius, sigfile,
                                          strategy, args, outfile)],
             'targets': [outfile],
             'uptodate': [run_once],
@@ -119,7 +126,7 @@ def task_gimme_dbg_nodes(catlasdir, radius, sigfile, strategy, args, outfile):
 
 @make_task
 def task_gimme_reads(readsfile, nodes_file, outfile):
-    CMD_gimme_reads = '~/dev/spacegraphcats/gimme-reads.py {0} {1} -o {2}'
+    CMD_gimme_reads = '{0}/gimme-reads.py {1} {2} -o {3}'
 
     name = 'gimme_reads<{0}.{1}.{2}>'.format(readsfile, nodes_file, outfile)
 
@@ -128,7 +135,8 @@ def task_gimme_reads(readsfile, nodes_file, outfile):
 
     return {'name': name,
             'title': title_fn,
-            'actions': [CMD_gimme_reads.format(readsfile, nodes_file, outfile)],
+            'actions': [CMD_gimme_reads.format(SPG_LOCATION,
+                                               readsfile, nodes_file, outfile)],
             'targets': [outfile],
             'uptodate': [run_once],
             'file_dep': [readsfile, nodes_file],
